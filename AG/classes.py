@@ -102,14 +102,15 @@ class Solution:
 
 if __name__ == "__main__":
     import numpy as np
+    from random import shuffle
 
     matrice_example = \
         np.matrix([[0, 14, 18, 9, 5, 7],
-                [14, 0, 12, 4, 17, 1],
-                [18, 12, 0, 3, 2, 1],
-                [9, 4, 3, 0, 4, 8],
-                [5, 17, 2, 4, 0, 11],
-                [7, 1, 1, 8, 11, 0]])
+                  [14, 0, 12, 4, 17, 1],
+                  [18, 12, 0, 3, 2, 1],
+                  [9, 4, 3, 0, 4, 8],
+                  [5, 17, 2, 4, 0, 11],
+                  [7, 1, 1, 8, 11, 0]])
 
     c1 = Customer(1, 0, 0, 10)
     c2 = Customer(2, 0, 0, 100)
@@ -117,8 +118,29 @@ if __name__ == "__main__":
     c4 = Customer(4, 0, 0, 15)
     c5 = Customer(5, 0, 0, 5)
 
+    customers = [c5, c4, c3, c2, c1]
+
+    solution = Solution(matrice_example)
+
+    while customers:
+        customer = customers.pop()
+        solution.addCustomer(customer)
+    print(solution)
+
+    print()
     customers = [c1, c2, c3, c4, c5]
 
+    solution = Solution(matrice_example)
+
+    while customers:
+        customer = customers.pop()
+        solution.addCustomer(customer)
+    print(solution)
+
+    print()
+    customers = [c1, c2, c3, c4, c5]
+    shuffle(customers)
+    print(customers)
     solution = Solution(matrice_example)
 
     while customers:
