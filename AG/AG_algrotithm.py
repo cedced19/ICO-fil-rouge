@@ -76,8 +76,8 @@ def cross(individu1: Individu, individu2: Individu):
 
 P_MUT = 0.5
 P_CROSS = 0.5
-N_ITERATION = 20
-N_POPULATION = 10
+N_ITERATION = 100
+N_POPULATION = 4
 N_SELECTION = (N_POPULATION-8)
 COST_MATRIX = \
     np.matrix([[0, 14, 18, 9, 5, 7],
@@ -87,20 +87,20 @@ COST_MATRIX = \
               [5, 17, 2, 4, 0, 11],
               [7, 1, 1, 8, 11, 0]])
 
-gene1 = Customer(0, 0, 0, 10)
-gene2 = Customer(1, 0, 0, 100)
-gene3 = Customer(2, 0, 0, 25)
-gene4 = Customer(3, 0, 0, 15)
-gene5 = Customer(4, 0, 0, 5)
+gene1 = Customer(0, 0, 0, 1)
+gene2 = Customer(1, 0, 0, 1)
+gene3 = Customer(2, 0, 0, 1)
+gene4 = Customer(3, 0, 0, 1)
+gene5 = Customer(4, 0, 0, 1)
 
 population = []
 
 from big_example import matrice_example2
 
 # Création de population et evaluer F(x):
-# baseInidividu = [gene1, gene2, gene3, gene4, gene5]
-COST_MATRIX = matrice_example2
-baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
+baseInidividu = [gene1, gene2, gene3, gene4, gene5]
+# COST_MATRIX = matrice_example2
+# baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
 population_initial = []
 n_error = 0
 for i in range(N_POPULATION):
@@ -113,6 +113,8 @@ for i in range(N_POPULATION):
     if n_error > 10:
         break
 population.append(population_initial)
+
+print(population_initial)
 
 S_total = [[]]
 for t in range(0, N_ITERATION):
@@ -156,7 +158,7 @@ for t in range(0, N_ITERATION):
 i = 0
 for pop in population:
     print("Population n:", i)
-    # print(pop)
+    print(pop)
     min = 0
     min_ind = None
     for ind in pop:
