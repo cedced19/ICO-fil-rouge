@@ -24,6 +24,7 @@ class Vehicule:
         self.id = vehicleID
         self.maxCapacity = capacity
         self.actualCapacity = 0
+        self.WEIGHT_COST = 5
 
     def addCustomer(self, customer: Customer):
         if (self.actualCapacity + customer.demande <= self.maxCapacity):
@@ -54,7 +55,7 @@ class Route:
         return False
 
     def calculateTotal(self):
-        return self.coutTotal + self.costMatrix[self.customers[-1].id, 0]
+        return self.coutTotal + self.costMatrix[self.customers[-1].id, 0] + self.vehicule.WEIGHT_COST
 
 
 class Solution:
@@ -75,8 +76,15 @@ class Solution:
             self.routes.append(newRoute)
             return True
         else:
-            if (self.routes[-1].addCustomer(customer)):
-                return True
+            # if (self.routes[-1].addCustomer(customer)):
+            #     return True
+
+            sum = self.costMatrix[0, customer.id] + self.routes[-1].vehicule.WEIGHT_COST + self.costMatrix[self.routes[-1].customers[-1].id, 0]
+            betweenCustomers = self.costMatrix[self.routes[-1].customers[-1].id, customer.id]
+
+            if (betweenCustomers < sum):
+                if (self.routes[-1].addCustomer(customer)):
+                    return True
             # The route don't accept more customer we add another route
             newVehicule = Vehicule(self.vehiculesID, CAPACITY)
             self.vehiculesID += 1
