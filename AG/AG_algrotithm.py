@@ -29,7 +29,29 @@ class Individu:
 
 
 def cross(individu1: Individu, individu2: Individu):
-    # TODO
+    
+    #Trouver trois clients aléatoire qui ne sont pas identiques
+    chif1 = randint(0,len(individu1.chromosome)-1)
+    chif2 = chif1
+    while(chif2 == chif1):
+        chif2 = randint(0,len(individu1.chromosome)-1)
+    chif3 = chif1
+    while(chif3==chif1)or(chif3==chif2) : 
+        chif3 = randint(0,len(individu1.chromosome)-1)
+    
+    # Trouver leurs emplacements dans les solutions 
+    place1 = [individu1.chromosome.index(chif1),individu1.chromosome.index(chif2),individu1.chromosome.index(chif3)]
+    place2 = [individu2.chromosome.index(chif1),individu2.chromosome.index(chif2),individu2.chromosome.index(chif3)]
+                        
+    # Ordonner leur emplacements  
+    place1.sort()
+    place2.sort()
+                        
+    # Remplacer le premier client concerné de solution 1 avec ce de solution 2
+    for i in range(3):
+        individu1[place1[i]]=individu2[place2[i]]
+                        
+    #Renvoyer la solution 1                   
     return individu1
 
 
