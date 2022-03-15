@@ -91,7 +91,7 @@ class Solution:
         return totalCost
 
     def __str__(self) -> str:
-        string = "ROUTES:\n"
+        string = f"ROUTES: {hex(id(self))} \n"
         for route in self.routes:
             string += f"Route: {route.customers} cost: {route.calculateTotal()}\n"
         string += f"Total cost: {self.calculateTotalCost()}"

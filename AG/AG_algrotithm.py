@@ -1,6 +1,7 @@
 from classes import Customer, Solution
 from random import shuffle, choice, random, randint
 import numpy as np
+from copy import copy
 
 
 class Individu:
@@ -24,20 +25,23 @@ class Individu:
         self.chromosome[pos] = self.chromosome[pos + 1]
         self.chromosome[pos + 1] = temp
 
+    def __copy__(self):
+        return Individu(self.chromosome)
+
     def __repr__(self) -> str:
-        return f"Individu{'{'}Chromosome: {self.chromosome} Score: {str(self.score)}{'}'}\n"
+        return f"Individu{'{ '}Chromosome: {self.chromosome} Score: {self.score}{'}'}\n"
 
 
 def cross(individu1: Individu, individu2: Individu):
 
-    #Trouver trois clients aléatoire qui ne sont pas identiques
-    chif1 = randint(0,len(individu1.chromosome)-1)
+    # Trouver trois clients aléatoire qui ne sont pas identiques
+    chif1 = randint(1, len(individu1.chromosome))
     chif2 = chif1
     while(chif2 == chif1):
-        chif2 = randint(0,len(individu1.chromosome)-1)
+        chif2 = randint(1, len(individu1.chromosome))
     chif3 = chif1
-    while(chif3==chif1)or(chif3==chif2) :
-        chif3 = randint(0,len(individu1.chromosome)-1)
+    while(chif3 == chif1) or (chif3 == chif2) :
+        chif3 = randint(1, len(individu1.chromosome))
     # print(individu1.chromosome, chif1)
     # Trouver leurs emplacements dans les solutions
 
@@ -70,13 +74,13 @@ def cross(individu1: Individu, individu2: Individu):
 
     # print(individu1.chromosome, individu2.chromosome)
 
-    #Renvoyer la solution 1
+    # Renvoyer la solution 1
     return individu1, individu2
 
 
-P_MUT = 0.5
-P_CROSS = 0.5
-N_ITERATION = 100
+P_MUT = 1
+P_CROSS = 1
+N_ITERATION = 20
 N_POPULATION = 4
 N_SELECTION = (N_POPULATION-8)
 COST_MATRIX = \
@@ -87,34 +91,32 @@ COST_MATRIX = \
               [5, 17, 2, 4, 0, 11],
               [7, 1, 1, 8, 11, 0]])
 
-gene1 = Customer(0, 0, 0, 1)
-gene2 = Customer(1, 0, 0, 1)
-gene3 = Customer(2, 0, 0, 1)
-gene4 = Customer(3, 0, 0, 1)
-gene5 = Customer(4, 0, 0, 1)
+
+## Example plus grand
+# from big_example import matrice_example2
+# baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
+# COST_MATRIX = matrice_example2
+
+
+# Création de population et evaluer F(x):
+gene1 = Customer(1, 0, 0, 1)
+gene2 = Customer(2, 0, 0, 1)
+gene3 = Customer(3, 0, 0, 1)
+gene4 = Customer(4, 0, 0, 1)
+gene5 = Customer(5, 0, 0, 1)
+baseInidividu = [gene1, gene2, gene3, gene4, gene5]
 
 population = []
 
-from big_example import matrice_example2
-
-# Création de population et evaluer F(x):
-baseInidividu = [gene1, gene2, gene3, gene4, gene5]
-# COST_MATRIX = matrice_example2
-# baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
 population_initial = []
-n_error = 0
+
 for i in range(N_POPULATION):
     shuffle(baseInidividu)
-    if (baseInidividu) not in population:
-        newIndividu = baseInidividu.copy()
-        population_initial.append(Individu(newIndividu))
-    else:
-        n_error += 1
-    if n_error > 10:
-        break
+    newIndividu = baseInidividu.copy()
+    population_initial.append(Individu(newIndividu))
+
 population.append(population_initial)
 
-print(population_initial)
 
 S_total = [[]]
 for t in range(0, N_ITERATION):
@@ -129,36 +131,35 @@ for t in range(0, N_ITERATION):
 
     population[t].sort(key=by_score)
     # print(population[t])
-
-    if ((len(population[t])//2 + len(S_total)) & 2 == 0):
+    # print(population)
+    if ((len(population[t])//2 + len(S_total[t])) % 2 == 0):
         N_SELECTION = len(population[t])//2
     else:
         N_SELECTION = len(population[t])//2 + 1
-    N_SELECTION = len(population[t])//2
 
     for i in range(N_SELECTION):
-        S.append(population[t][i])
+        S.append(copy(population[t][i]))
 
     # Group by pairs
     pairs = list(zip(S[::2], S[1::2]))
     for pair in pairs:
         if random() < P_CROSS:
             child1, child2 = cross(*pair)
-            S_total[t+1].append(child1)
-            S_total[t+1].append(child2)
+            S_total[t+1].append(copy(child1))
+            S_total[t+1].append(copy(child2))
         else:
-            S_total[t+1].append(pair[0])
-            S_total[t+1].append(pair[1])
+            S_total[t+1].append(copy(pair[0]))
+            S_total[t+1].append(copy(pair[1]))
 
     for individu in S_total[t+1]:
         if random() < P_MUT:
             individu.mutation()
-        population[t+1].append(individu)
+        population[t+1].append(copy(individu))
 
 i = 0
 for pop in population:
-    print("Population n:", i)
-    print(pop)
+    # print("Population n:", i)
+    # print(pop)
     min = 0
     min_ind = None
     for ind in pop:
@@ -166,7 +167,7 @@ for pop in population:
             min = ind.score
             min_ind = ind
     print(min_ind.solution)
-    print()
+    # print()
     i += 1
 
 # print(pop)
