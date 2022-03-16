@@ -49,7 +49,8 @@ class Route:
             self.customers.append(customer)
             return True
         if (self.vehicule.addCustomer(customer)):
-            self.coutTotal += self.costMatrix[self.customers[-1].id, customer.id]
+            self.coutTotal += self.costMatrix[self.customers[-1].id, 
+                                              customer.id]
             self.customers.append(customer)
             return True
         return False

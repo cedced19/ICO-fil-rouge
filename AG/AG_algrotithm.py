@@ -3,6 +3,7 @@ from random import shuffle, choice, random, randint
 import numpy as np
 from copy import copy
 from typing import List
+from time import process_time
 import matplotlib.pyplot as plt
 
 
@@ -129,6 +130,8 @@ population.append(population_initial)
 score_by_iteration = {}
 score_by_time = {}
 
+start = process_time()
+
 S_total = [[]]
 for t in range(0, N_ITERATION):
     # Rajoute P[t+1] ; S[t+1]
@@ -165,7 +168,9 @@ for t in range(0, N_ITERATION):
             individu.mutation()
         population[t+1].append(copy(individu))
 
-    score_by_iteration[t] = ScorePopulation(population[t])
+    score_population = ScorePopulation(population[t])
+    score_by_iteration[t] = score_population
+    score_by_time[(process_time() - start)] = score_population
 
 
 for pop in population:
@@ -186,10 +191,24 @@ mean_score_iteration = [score_by_iteration[key][0] for
 min_score_iteration = [score_by_iteration[key][1] for
                        key in score_by_iteration]
 
+mean_score_time = [score_by_time[key][0] for
+                   key in score_by_time]
+min_score_time = [score_by_time[key][1] for
+                  key in score_by_time]
+
 plt.plot(mean_score_iteration, color="red", label="mean score")
 plt.plot(min_score_iteration, color="green", label="min score")
 plt.legend()
 plt.title("Score AG par iteration")
 plt.xlabel("N. Iteration")
+plt.ylabel("Score")
+plt.show()
+
+plt.plot(mean_score_iteration, color="red", label="mean score")
+plt.plot(min_score_iteration, color="green", label="min score")
+plt.legend()
+plt.xticks(list(score_by_time.keys()))
+plt.title("Score AG par temps")
+plt.xlabel("temps [s]")
 plt.ylabel("Score")
 plt.show()
