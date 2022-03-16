@@ -1,4 +1,3 @@
-from cProfile import label
 from classes import Customer, Solution
 from random import shuffle, choice, random, randint
 import numpy as np
@@ -32,7 +31,8 @@ class Individu:
         return Individu(self.chromosome)
 
     def __repr__(self) -> str:
-        return f"Individu{'{ '}Chromosome: {self.chromosome} Score: {self.score}{'}'}\n"
+        return f"Individu{'{ '}Chromosome: {self.chromosome} \
+            Score: {self.score}{'}'}\n"
 
 
 def ScorePopulation(population: List[Individu]):
@@ -53,29 +53,26 @@ def cross(individu1: Individu, individu2: Individu):
     while(chif2 == chif1):
         chif2 = randint(1, len(individu1.chromosome))
     chif3 = chif1
-    while(chif3 == chif1) or (chif3 == chif2) :
+    while(chif3 == chif1) or (chif3 == chif2):
         chif3 = randint(1, len(individu1.chromosome))
-    # print(individu1.chromosome, chif1)
+
     # Trouver leurs emplacements dans les solutions
-
-    # print(individu1.chromosome, individu2.chromosome, chif1, chif2, chif3)
-
     def find_customer(individu, id):
-        return [individu.chromosome.index(customer) for customer in individu.chromosome if customer.id == id][0]
+        return [individu.chromosome.index(customer) for
+                customer in individu.chromosome if customer.id == id][0]
 
-    place1 = [find_customer(individu1, chif1), find_customer(individu1, chif2), find_customer(individu1, chif3)]
-    place2 = [find_customer(individu2, chif1), find_customer(individu2, chif2), find_customer(individu2, chif3)]
-    # place1 = [individu1.chromosome.index(chif1),individu1.chromosome.index(chif2),individu1.chromosome.index(chif3)]
-    # place2 = [individu2.chromosome.index(chif1),individu2.chromosome.index(chif2),individu2.chromosome.index(chif3)]
+    place1 = [find_customer(individu1, chif1), find_customer(individu1, chif2),
+              find_customer(individu1, chif3)]
+    place2 = [find_customer(individu2, chif1), find_customer(individu2, chif2),
+              find_customer(individu2, chif3)]
 
     # Ordonner leur emplacements
     place1.sort()
     place2.sort()
 
-    # print(place1, place2)
-
     individu1_copy = individu1.chromosome.copy()
     individu2_copy = individu2.chromosome.copy()
+
     # Remplacer le premier client concerné de solution 1 avec ce de solution 2
     # Remplacer le premier client concerné de solution 2 avec ce de solution 1
     for i in range(3):
@@ -85,9 +82,7 @@ def cross(individu1: Individu, individu2: Individu):
     individu1.chromosome = individu1_copy
     individu2.chromosome = individu2_copy
 
-    # print(individu1.chromosome, individu2.chromosome)
-
-    # Renvoyer la solution 1
+    # Renvoyer les deux individus
     return individu1, individu2
 
 
@@ -105,7 +100,7 @@ COST_MATRIX = \
               [7, 1, 1, 8, 11, 0]])
 
 
-## Example plus grand
+# Example plus grand
 # from big_example import matrice_example2
 # baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
 # COST_MATRIX = matrice_example2
@@ -146,8 +141,6 @@ for t in range(0, N_ITERATION):
         return individu.score
 
     population[t].sort(key=by_score)
-    # print(population[t])
-    # print(population)
     if ((len(population[t])//2 + len(S_total[t])) % 2 == 0):
         N_SELECTION = len(population[t])//2
     else:
@@ -184,12 +177,14 @@ for pop in population:
         if (ind.score < min) or (not min_ind):
             min = ind.score
             min_ind = ind
-    print(min_ind.solution)
+    # print(min_ind.solution)
     # print()
     i += 1
 
-mean_score_iteration = [score_by_iteration[key][0] for key in score_by_iteration]
-min_score_iteration = [score_by_iteration[key][1] for key in score_by_iteration]
+mean_score_iteration = [score_by_iteration[key][0] for
+                        key in score_by_iteration]
+min_score_iteration = [score_by_iteration[key][1] for
+                       key in score_by_iteration]
 
 plt.plot(mean_score_iteration, color="red", label="mean score")
 plt.plot(min_score_iteration, color="green", label="min score")
