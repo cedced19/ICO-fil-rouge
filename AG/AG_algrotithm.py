@@ -3,8 +3,10 @@ from random import shuffle, choice, random, randint
 import numpy as np
 from copy import copy
 from typing import List
-from time import process_time
+from time import process_time # CPU Time
 import matplotlib.pyplot as plt
+from tqdm import tqdm # Progress Bar
+from big_example import matrice_example2 # Matrice distance avec 52 customer
 
 
 class Individu:
@@ -89,7 +91,7 @@ def cross(individu1: Individu, individu2: Individu):
 
 P_MUT = 1
 P_CROSS = 1
-N_ITERATION = 10
+N_ITERATION = 20
 N_POPULATION = 4
 N_SELECTION = (N_POPULATION-8)
 COST_MATRIX = \
@@ -101,8 +103,7 @@ COST_MATRIX = \
               [7, 1, 1, 8, 11, 0]])
 
 
-# Example plus grand
-from big_example import matrice_example2
+# Example plus grand avec 52 clients, la demande de chaqun est aleatoire
 baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
 COST_MATRIX = matrice_example2
 
@@ -133,7 +134,7 @@ score_by_time = {}
 start = process_time()
 
 S_total = [[]]
-for t in range(0, N_ITERATION):
+for t in tqdm(range(0, N_ITERATION)):
     # Rajoute P[t+1] ; S[t+1]
     population.append([])
     S_total.append([])
@@ -172,7 +173,6 @@ for t in range(0, N_ITERATION):
     score_by_iteration[t] = score_population
     score_by_time[round(process_time() - start, 2)] = score_population
 
-
 for pop in population:
     # print("Population n:", i)
     # print(pop)
@@ -204,10 +204,10 @@ plt.xlabel("N. Iteration")
 plt.ylabel("Score")
 plt.show()
 
-plt.plot(mean_score_iteration, color="red", label="mean score")
-plt.plot(min_score_iteration, color="green", label="min score")
+plt.plot(list(score_by_time), mean_score_iteration, color="red", label="mean score")
+plt.plot(list(score_by_time), min_score_iteration,  color="green", label="min score")
 plt.legend()
-plt.xticks(list(score_by_time.keys()))
+# plt.xticks(list(score_by_time.keys()))
 plt.title("Score AG par temps")
 plt.xlabel("temps [s]")
 plt.ylabel("Score")
