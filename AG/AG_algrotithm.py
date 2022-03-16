@@ -1,12 +1,12 @@
 from classes import Customer, Solution
-from random import shuffle, choice, random, randint
+from random import shuffle, random, randint, seed
 import numpy as np
 from copy import copy
 from typing import List
-from time import process_time # CPU Time
+from time import process_time  # CPU Time
 import matplotlib.pyplot as plt
-from tqdm import tqdm # Progress Bar
-from big_example import matrice_example2 # Matrice distance avec 52 customer
+from alive_progress import alive_bar  # Progress Bar
+from big_example import matrice_example2  # Matrice distance avec 52 customer
 
 
 class Individu:
@@ -89,11 +89,12 @@ def cross(individu1: Individu, individu2: Individu):
     return individu1, individu2
 
 
-P_MUT = 1
-P_CROSS = 1
+seed(100)
+
+P_MUT = 0.6
+P_CROSS = 0.6
 N_ITERATION = 20
 N_POPULATION = 4
-N_SELECTION = (N_POPULATION-8)
 COST_MATRIX = \
     np.matrix([[0, 14, 18, 9, 5, 7],
               [14, 0, 12, 4, 17, 1],
@@ -134,44 +135,47 @@ score_by_time = {}
 start = process_time()
 
 S_total = [[]]
-for t in tqdm(range(0, N_ITERATION)):
-    # Rajoute P[t+1] ; S[t+1]
-    population.append([])
-    S_total.append([])
-    # Selection N individus de notre P(t)
-    S = S_total[t]
+with alive_bar(N_ITERATION, title="AG Algorithm:", ctrl_c=False, theme="smooth") as bar:
+    for t in range(0, N_ITERATION):
+        # Rajoute P[t+1] ; S[t+1]
+        population.append([])
+        S_total.append([])
+        # Selection N individus de notre P(t)
+        S = S_total[t]
 
-    def by_score(individu: Individu):
-        return individu.score
+        def by_score(individu: Individu):
+            return individu.score
 
-    population[t].sort(key=by_score)
-    if ((len(population[t])//2 + len(S_total[t])) % 2 == 0):
-        N_SELECTION = len(population[t])//2
-    else:
-        N_SELECTION = len(population[t])//2 + 1
-
-    for i in range(N_SELECTION):
-        S.append(copy(population[t][i]))
-
-    # Group by pairs
-    pairs = list(zip(S[::2], S[1::2]))
-    for pair in pairs:
-        if random() < P_CROSS:
-            child1, child2 = cross(*pair)
-            S_total[t+1].append(copy(child1))
-            S_total[t+1].append(copy(child2))
+        population[t].sort(key=by_score)
+        if ((len(population[t])//2 + len(S_total[t])) % 2 == 0):
+            N_SELECTION = len(population[t])//2
         else:
-            S_total[t+1].append(copy(pair[0]))
-            S_total[t+1].append(copy(pair[1]))
+            N_SELECTION = len(population[t])//2 + 1
 
-    for individu in S_total[t+1]:
-        if random() < P_MUT:
-            individu.mutation()
-        population[t+1].append(copy(individu))
+        for i in range(N_SELECTION):
+            S.append(copy(population[t][i]))
 
-    score_population = ScorePopulation(population[t])
-    score_by_iteration[t] = score_population
-    score_by_time[round(process_time() - start, 2)] = score_population
+        # Group by pairs
+        pairs = list(zip(S[::2], S[1::2]))
+        for pair in pairs:
+            if random() < P_CROSS:
+                child1, child2 = cross(*pair)
+                S_total[t+1].append(copy(child1))
+                S_total[t+1].append(copy(child2))
+            else:
+                S_total[t+1].append(copy(pair[0]))
+                S_total[t+1].append(copy(pair[1]))
+
+        for individu in S_total[t+1]:
+            if random() < P_MUT:
+                individu.mutation()
+            population[t+1].append(copy(individu))
+
+        score_population = ScorePopulation(population[t])
+        score_by_iteration[t] = score_population
+        score_by_time[round(process_time() - start, 2)] = score_population
+
+        bar()
 
 for pop in population:
     # print("Population n:", i)
