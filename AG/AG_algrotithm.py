@@ -1,7 +1,10 @@
+from cProfile import label
 from classes import Customer, Solution
 from random import shuffle, choice, random, randint
 import numpy as np
 from copy import copy
+from typing import List
+import matplotlib.pyplot as plt
 
 
 class Individu:
@@ -30,6 +33,16 @@ class Individu:
 
     def __repr__(self) -> str:
         return f"Individu{'{ '}Chromosome: {self.chromosome} Score: {self.score}{'}'}\n"
+
+
+def ScorePopulation(population: List[Individu]):
+    sum_score = 0
+    min_score = None
+    for individu in population:
+        sum_score += individu.score
+        if ((not min_score) or individu.score < min_score):
+            min_score = individu.score
+    return (sum_score.max()/len(population)), min_score.max()
 
 
 def cross(individu1: Individu, individu2: Individu):
@@ -118,6 +131,9 @@ for i in range(N_POPULATION):
 population.append(population_initial)
 
 
+score_by_iteration = {}
+score_by_time = {}
+
 S_total = [[]]
 for t in range(0, N_ITERATION):
     # Rajoute P[t+1] ; S[t+1]
@@ -156,7 +172,9 @@ for t in range(0, N_ITERATION):
             individu.mutation()
         population[t+1].append(copy(individu))
 
-i = 0
+    score_by_iteration[t] = ScorePopulation(population[t])
+
+
 for pop in population:
     # print("Population n:", i)
     # print(pop)
@@ -170,4 +188,13 @@ for pop in population:
     # print()
     i += 1
 
-# print(pop)
+mean_score_iteration = [score_by_iteration[key][0] for key in score_by_iteration]
+min_score_iteration = [score_by_iteration[key][1] for key in score_by_iteration]
+
+plt.plot(mean_score_iteration, color="red", label="mean score")
+plt.plot(min_score_iteration, color="green", label="min score")
+plt.legend()
+plt.title("Score AG par iteration")
+plt.xlabel("N. Iteration")
+plt.ylabel("Score")
+plt.show()
