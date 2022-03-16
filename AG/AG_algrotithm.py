@@ -89,7 +89,7 @@ def cross(individu1: Individu, individu2: Individu):
 
 P_MUT = 1
 P_CROSS = 1
-N_ITERATION = 20
+N_ITERATION = 10
 N_POPULATION = 4
 N_SELECTION = (N_POPULATION-8)
 COST_MATRIX = \
@@ -102,9 +102,9 @@ COST_MATRIX = \
 
 
 # Example plus grand
-# from big_example import matrice_example2
-# baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(52)]
-# COST_MATRIX = matrice_example2
+from big_example import matrice_example2
+baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
+COST_MATRIX = matrice_example2
 
 
 # Création de population et evaluer F(x):
@@ -113,7 +113,7 @@ gene2 = Customer(2, 0, 0, 1)
 gene3 = Customer(3, 0, 0, 1)
 gene4 = Customer(4, 0, 0, 1)
 gene5 = Customer(5, 0, 0, 1)
-baseInidividu = [gene1, gene2, gene3, gene4, gene5]
+# baseInidividu = [gene1, gene2, gene3, gene4, gene5]
 
 population = []
 
@@ -170,7 +170,7 @@ for t in range(0, N_ITERATION):
 
     score_population = ScorePopulation(population[t])
     score_by_iteration[t] = score_population
-    score_by_time[(process_time() - start)] = score_population
+    score_by_time[round(process_time() - start, 2)] = score_population
 
 
 for pop in population:
