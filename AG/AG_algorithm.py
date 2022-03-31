@@ -12,9 +12,10 @@ from mesa import Agent
 
 class Individu:
 
-    def __init__(self, chromosome: list) -> None:
+    def __init__(self, chromosome: list, cost_matrice) -> None:
         self.chromosome = chromosome
-        self.solution = Solution(COST_MATRIX)
+        self.cost_matrice = cost_matrice
+        self.solution = Solution(self.cost_matrice)
         self.score = self.calculateScore()
 
     def calculateScore(self):
@@ -32,7 +33,7 @@ class Individu:
         self.chromosome[pos + 1] = temp
 
     def __copy__(self):
-        return Individu(self.chromosome)
+        return Individu(self.chromosome, self.cost_matrice)
 
     def __repr__(self) -> str:
         return f"Individu{'{ '}Chromosome: {self.chromosome} \
@@ -86,14 +87,15 @@ class AG_Algorithm:
     N_ITERATION = 20
     N_POPULATION = 4
 
-    def __init__(self, base_individu) -> None:
+    def __init__(self, base_individu, cost_matrice) -> None:
         self.population = []
         self.population_initial = []
+        self.cost_matrice = cost_matrice
         self.baseIndividu = base_individu
         for i in range(self.N_POPULATION):
             shuffle(self.baseIndividu)
             newIndividu = self.baseIndividu.copy()
-            self.population_initial.append(Individu(newIndividu))
+            self.population_initial.append(Individu(newIndividu, self.cost_matrice))
 
         self.population.append(self.population_initial)
 
@@ -201,37 +203,6 @@ class AG_Algorithm:
         plt.show()
 
 
-def convertGlobalSolToAGSol(solution: List[List]):
-    """
-    Convert solution of type:
-    [[1, 2, 5], [4, 3]]
-    to:
-    [1, 2, 5, 4, 3]
-    """
-
-    return [item for sublist in solution for item in sublist]
-
-
-class AGent(Agent):
-    """
-    An agent with initial solution.
-    With AG algorithm methauristic
-    """
-
-    def __init__(self, unique_id, sol_init, matrice, n_max, aspiration, w, capacities, max_capacity, model):
-        super().__init__(unique_id, model)
-        self.sol_init, self.matrice, self.n_max, self.aspiration, self.w, self.capacities, self.max_capacity = sol_init, matrice, n_max, aspiration, w, capacities, max_capacity
-        self.result_cost = np.Inf
-
-    def step(self):
-        print("step")
-        sol_init_converted = convertGlobalSolToAGSol(self.sol_init)
-        agAlgorithm = AG_Algorithm(sol_init_converted)
-        result = agAlgorithm.perform()
-        self.result_cost = result.calculateScore()
-        self.result_sol = result.solution.convertGlobalSolution()
-
-
 if __name__ == "__main__":
     COST_MATRIX = \
         np.matrix([[0, 14, 18, 9, 5, 7],
@@ -246,7 +217,7 @@ if __name__ == "__main__":
     # baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
     # COST_MATRIX = matrice_example2
 
-
+    
     # Création de population et evaluer F(x):
     gene1 = Customer(1, 0, 0, 1)
     gene2 = Customer(2, 0, 0, 1)
@@ -255,9 +226,8 @@ if __name__ == "__main__":
     gene5 = Customer(5, 0, 0, 1)
     baseInidividu = [gene1, gene2, gene3, gene4, gene5]
 
+    ag = AG_Algorithm(baseInidividu, COST_MATRIX)
+    ag.perform()
+    ag.performance_plot()
 
-    # ag = AG_Algorithm(baseInidividu)
-    # ag.perform()
-    # ag.performance_plot()
-
-    print(convertGlobalSolToAGSol([[1, 2, 5], [4, 3]]))
+    print(type(convertGlobalSolToAGSol([[1, 2, 5], [4, 3]], capacities=[1]*5)[0]))
