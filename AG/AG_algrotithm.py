@@ -7,6 +7,7 @@ from time import process_time  # CPU Time
 import matplotlib.pyplot as plt
 from alive_progress import alive_bar  # Progress Bar
 from big_example import matrice_example2  # Matrice distance avec 52 customer
+from mesa import Agent
 
 
 class Individu:
@@ -98,6 +99,7 @@ class AG_Algorithm:
 
         self.score_by_iteration = {}
         self.score_by_time = {}
+        self.bestIndividu = None
 
     def ScorePopulation(self, population: List[Individu]):
         sum_score = 0
@@ -108,7 +110,7 @@ class AG_Algorithm:
                 min_score = individu.score
         return (sum_score.max()/len(population)), min_score.max()
 
-    def perform(self):
+    def perform(self) -> Individu:
         start = process_time()
 
         S_total = [[]]
@@ -163,20 +165,23 @@ class AG_Algorithm:
                 if (ind.score < min) or (not min_ind):
                     min = ind.score
                     min_ind = ind
+                    self.bestIndividu = ind
             # print(min_ind.solution)
             # print()
             i += 1
 
+        return self.bestIndividu
+
     def performance_plot(self):
         mean_score_iteration = [self.score_by_iteration[key][0] for
-                        key in self.score_by_iteration]
+                                key in self.score_by_iteration]
         min_score_iteration = [self.score_by_iteration[key][1] for
-                            key in self.score_by_iteration]
+                               key in self.score_by_iteration]
 
         mean_score_time = [self.score_by_time[key][0] for
-                        key in self.score_by_time]
+                           key in self.score_by_time]
         min_score_time = [self.score_by_time[key][1] for
-                        key in self.score_by_time]
+                          key in self.score_by_time]
 
         plt.plot(mean_score_iteration, color="red", label="mean score")
         plt.plot(min_score_iteration, color="green", label="min score")
@@ -196,47 +201,63 @@ class AG_Algorithm:
         plt.show()
 
 
+def convertGlobalSolToAGSol(solution: List[List]):
+    """
+    Convert solution of type:
+    [[1, 2, 5], [4, 3]]
+    to:
+    [1, 2, 5, 4, 3]
+    """
+
+    return [item for sublist in solution for item in sublist]
 
 
+class AGent(Agent):
+    """
+    An agent with initial solution.
+    With AG algorithm methauristic
+    """
+
+    def __init__(self, unique_id, sol_init, matrice, n_max, aspiration, w, capacities, max_capacity, model):
+        super().__init__(unique_id, model)
+        self.sol_init, self.matrice, self.n_max, self.aspiration, self.w, self.capacities, self.max_capacity = sol_init, matrice, n_max, aspiration, w, capacities, max_capacity
+        self.result_cost = np.Inf
+
+    def step(self):
+        print("step")
+        sol_init_converted = convertGlobalSolToAGSol(self.sol_init)
+        agAlgorithm = AG_Algorithm(sol_init_converted)
+        result = agAlgorithm.perform()
+        self.result_cost = result.calculateScore()
+        self.result_sol = result.solution.convertGlobalSolution()
 
 
+if __name__ == "__main__":
+    COST_MATRIX = \
+        np.matrix([[0, 14, 18, 9, 5, 7],
+                [14, 0, 12, 4, 17, 1],
+                [18, 12, 0, 3, 2, 1],
+                [9, 4, 3, 0, 4, 8],
+                [5, 17, 2, 4, 0, 11],
+                [7, 1, 1, 8, 11, 0]])
 
 
+    # Example plus grand avec 52 clients, la demande de chaqun est aleatoire
+    # baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
+    # COST_MATRIX = matrice_example2
 
 
-
-COST_MATRIX = \
-    np.matrix([[0, 14, 18, 9, 5, 7],
-              [14, 0, 12, 4, 17, 1],
-              [18, 12, 0, 3, 2, 1],
-              [9, 4, 3, 0, 4, 8],
-              [5, 17, 2, 4, 0, 11],
-              [7, 1, 1, 8, 11, 0]])
-
-
-# Example plus grand avec 52 clients, la demande de chaqun est aleatoire
-# baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
-# COST_MATRIX = matrice_example2
+    # Création de population et evaluer F(x):
+    gene1 = Customer(1, 0, 0, 1)
+    gene2 = Customer(2, 0, 0, 1)
+    gene3 = Customer(3, 0, 0, 1)
+    gene4 = Customer(4, 0, 0, 1)
+    gene5 = Customer(5, 0, 0, 1)
+    baseInidividu = [gene1, gene2, gene3, gene4, gene5]
 
 
-# Création de population et evaluer F(x):
-gene1 = Customer(1, 0, 0, 1)
-gene2 = Customer(2, 0, 0, 1)
-gene3 = Customer(3, 0, 0, 1)
-gene4 = Customer(4, 0, 0, 1)
-gene5 = Customer(5, 0, 0, 1)
-baseInidividu = [gene1, gene2, gene3, gene4, gene5]
+    # ag = AG_Algorithm(baseInidividu)
+    # ag.perform()
+    # ag.performance_plot()
 
-
-ag = AG_Algorithm(baseInidividu)
-ag.perform()
-ag.performance_plot()
-
-
-
-
-
-
-
-
-
+    print(convertGlobalSolToAGSol([[1, 2, 5], [4, 3]]))

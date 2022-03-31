@@ -12,7 +12,7 @@ class Customer:
         self.intervalleTemps = None
 
     def __str__(self) -> str:
-        return self.id
+        return str(self.id)
 
     def __repr__(self) -> str:
         return str(self.id)
@@ -106,6 +106,13 @@ class Solution:
         string += f"Total cost: {self.calculateTotalCost()}"
         return string
 
+    def convertGlobalSolution(self):
+        solution = []
+        for route in self.routes:
+            local_route = [customer.id for customer in route.customers]
+            solution.append(local_route)
+        return solution
+
 
 # TEST:
 
@@ -156,3 +163,8 @@ if __name__ == "__main__":
         customer = customers.pop()
         solution.addCustomer(customer)
     print(solution)
+
+    a = solution.convertGlobalSolution()[0][0]
+    print(solution.convertGlobalSolution())
+    print(type(a))
+    print(a)
