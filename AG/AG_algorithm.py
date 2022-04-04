@@ -217,7 +217,7 @@ if __name__ == "__main__":
     # baseInidividu = [Customer(i, 0, 0, randint(10, 99)) for i in range(1, 52)]
     # COST_MATRIX = matrice_example2
 
-    
+
     # Création de population et evaluer F(x):
     gene1 = Customer(1, 0, 0, 1)
     gene2 = Customer(2, 0, 0, 1)
@@ -229,5 +229,3 @@ if __name__ == "__main__":
     ag = AG_Algorithm(baseInidividu, COST_MATRIX)
     ag.perform()
     ag.performance_plot()
-
-    print(type(convertGlobalSolToAGSol([[1, 2, 5], [4, 3]], capacities=[1]*5)[0]))
