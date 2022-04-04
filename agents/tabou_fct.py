@@ -182,7 +182,7 @@ def exchange_inside(solution, matrice, w, tabu_list, aspiration, capacities, max
     
     return neighbours
 
-def tabu(sol_init, matrice, n_max, aspiration, w, capacities, max_capacity, plot = False):
+def tabu(sol_init, matrice, n_max, aspiration, w, capacities, max_capacity, plot = False, log = False):
     start = process_time()
     cout_iter = []
     cout_best_iter = []
@@ -204,14 +204,20 @@ def tabu(sol_init, matrice, n_max, aspiration, w, capacities, max_capacity, plot
             #print(tmp[0][2])
         else:
             break
-        if (cout(current_sol, matrice, w) < cout(best_sol, matrice, w)):
+        current_sol_cost = cout(current_sol, matrice, w)
+        best_sol_cost = cout(best_sol, matrice, w)
+        if (current_sol_cost < best_sol_cost):
             best_sol = current_sol
+            best_sol_cost = current_sol_cost
             best_iter = n_iter
 
-        cout_iter.append(cout(current_sol, matrice, w))
+        cout_iter.append(current_sol_cost)
         nb_iter.append(n_iter)
-        cout_best_iter.append(cout(best_sol, matrice, w))
+        cout_best_iter.append(best_sol_cost)
     
+        if (log):
+            print("Tabou best: {}, current: {}".format(best_sol_cost,current_sol_cost))
+
     if (plot):
         # plot1 : coût par itération 
         #plt.subplot(1,2,1)

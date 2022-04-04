@@ -1,4 +1,4 @@
-from classes import Customer, Solution
+from AG.classes import Customer, Solution
 from random import shuffle, random, randint, seed
 import numpy as np
 from copy import copy
@@ -6,19 +6,20 @@ from typing import List
 from time import process_time  # CPU Time
 import matplotlib.pyplot as plt
 from alive_progress import alive_bar  # Progress Bar
-from big_example import matrice_example2  # Matrice distance avec 52 customer
-from mesa import Agent
+# from big_example import matrice_example2  # Matrice distance avec 52 customer
 
 
 class Individu:
 
-    def __init__(self, chromosome: list, cost_matrice) -> None:
+    def __init__(self, chromosome: list, cost_matrice, maxCapacity) -> None:
         self.chromosome = chromosome
         self.cost_matrice = cost_matrice
-        self.solution = Solution(self.cost_matrice)
+        self.maxCapacity = maxCapacity
+        self.solution = Solution(self.cost_matrice, maxCapacity)
         self.score = self.calculateScore()
 
     def calculateScore(self):
+        self.solution = Solution(self.cost_matrice, self.maxCapacity)
         chromosomeCopy = self.chromosome.copy()
         while chromosomeCopy:
             customer = chromosomeCopy.pop()
@@ -33,11 +34,11 @@ class Individu:
         self.chromosome[pos + 1] = temp
 
     def __copy__(self):
-        return Individu(self.chromosome, self.cost_matrice)
+        return Individu(self.chromosome, self.cost_matrice, self.maxCapacity)
 
     def __repr__(self) -> str:
         return f"Individu{'{ '}Chromosome: {self.chromosome} \
-            Score: {self.score}{'}'}\n"
+            Score: {self.calculateScore()}{'}'}\n"
 
 
 class AG_Algorithm:
@@ -87,7 +88,7 @@ class AG_Algorithm:
     N_ITERATION = 20
     N_POPULATION = 4
 
-    def __init__(self, base_individu, cost_matrice) -> None:
+    def __init__(self, base_individu, cost_matrice, maxCapacity) -> None:
         self.population = []
         self.population_initial = []
         self.cost_matrice = cost_matrice
@@ -95,13 +96,14 @@ class AG_Algorithm:
         for i in range(self.N_POPULATION):
             shuffle(self.baseIndividu)
             newIndividu = self.baseIndividu.copy()
-            self.population_initial.append(Individu(newIndividu, self.cost_matrice))
+            self.population_initial.append(Individu(newIndividu, self.cost_matrice, maxCapacity))
 
         self.population.append(self.population_initial)
 
         self.score_by_iteration = {}
         self.score_by_time = {}
         self.bestIndividu = None
+
 
     def ScorePopulation(self, population: List[Individu]):
         sum_score = 0
@@ -168,10 +170,9 @@ class AG_Algorithm:
                     min = ind.score
                     min_ind = ind
                     self.bestIndividu = ind
-            # print(min_ind.solution)
-            # print()
             i += 1
-
+        # print("BEST SOLUTION PERFORM:\n")
+        # print(self.bestIndividu)
         return self.bestIndividu
 
     def performance_plot(self):

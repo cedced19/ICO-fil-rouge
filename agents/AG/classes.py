@@ -12,13 +12,15 @@ class Customer:
         self.intervalleTemps = None
 
     def __str__(self) -> str:
-        return str(self.id)
+        return str(self.id) + " " + str(self.demande)
 
     def __repr__(self) -> str:
         return str(self.id)
 
 
 class Vehicule:
+
+    maxCapacity = 100
 
     def __init__(self, vehicleID, capacity) -> None:
         self.id = vehicleID
@@ -61,8 +63,9 @@ class Route:
 
 class Solution:
 
-    def __init__(self, costMatrix) -> None:
+    def __init__(self, costMatrix, maxCapacity) -> None:
         self.routes = []
+        self.maxCapacity = maxCapacity
         # TODO Actually infinite vehicule
         self.vehicules = []
         self.vehiculesID = 0
@@ -70,7 +73,7 @@ class Solution:
 
     def addCustomer(self, customer: Customer):
         if not self.routes:
-            newVehicule = Vehicule(self.vehiculesID, CAPACITY)
+            newVehicule = Vehicule(self.vehiculesID, self.maxCapacity)
             self.vehiculesID += 1
             newRoute = Route(newVehicule, self.costMatrix)
             newRoute.addCustomer(customer)
@@ -87,7 +90,7 @@ class Solution:
                 if (self.routes[-1].addCustomer(customer)):
                     return True
             # The route don't accept more customer we add another route
-            newVehicule = Vehicule(self.vehiculesID, CAPACITY)
+            newVehicule = Vehicule(self.vehiculesID, self.maxCapacity)
             self.vehiculesID += 1
             newRoute = Route(newVehicule, self.costMatrix)
             newRoute.addCustomer(customer)

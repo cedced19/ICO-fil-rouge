@@ -146,7 +146,7 @@ def exchange_inside(solution, matrice, w, capacities, max_capacity):
     neighbours = filter_on_capacities(neighbours, capacities, max_capacity)
     return neighbours
 
-def recuit(sol_init, matrice, w, t0, a, n_iter_cycle, capacities, max_capacity, plot = False):
+def recuit(sol_init, matrice, w, t0, a, n_iter_cycle, capacities, max_capacity, plot = False, log = False):
     best_sol = sol_init
     current_sol = sol_init
     best_sol_cost = cout(best_sol, matrice, w)
@@ -192,7 +192,8 @@ def recuit(sol_init, matrice, w, t0, a, n_iter_cycle, capacities, max_capacity, 
           
             else:
                 break
-            print("best: {}, current: {}".format(best_sol_cost,current_sol_cost))
+            if (log):
+                print("RS best: {}, current: {}".format(best_sol_cost,current_sol_cost))
             
         t = a * t
     if (plot):

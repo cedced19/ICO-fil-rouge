@@ -1,7 +1,6 @@
 from mesa import Agent, Model
-from mesa.time import RandomActivation
-from AG_algorithm import AG_Algorithm
-from classes import Customer
+from AG.AGalgorithm import AG_Algorithm
+from AG.classes import Customer
 from typing import List
 import numpy as np
 
@@ -15,7 +14,9 @@ def convertGlobalSolToAGSol(solution: List[List], capacities):
     sol_AG = []
     sol_converted = [item for sublist in solution for item in sublist]
     for id in sol_converted:
-        sol_AG.append(Customer(id, 0, 0, capacities[id-1]))
+        customer = Customer(id, 0, 0, capacities[id-1])
+        # print(customer)
+        sol_AG.append(customer)
     return sol_AG
 
 
@@ -38,28 +39,32 @@ class AGent(Agent):
         self.result_cost = np.Inf
 
     def step(self):
-        print("step")
-        sol_init_converted = convertGlobalSolToAGSol(self.sol_init, self.capacities)
-        agAlgorithm = AG_Algorithm(sol_init_converted, self.matrice)
+        sol = self.model.selectSol()
+        sol_init_converted = convertGlobalSolToAGSol(sol, self.capacities)
+        agAlgorithm = AG_Algorithm(sol_init_converted, self.matrice, self.max_capacity)
         result = agAlgorithm.perform()
         self.result_cost = result.calculateScore()
+        # print(result.chromosome)
+        # print(result.calculateScore())
         self.result_sol = result.solution.convertGlobalSolution()
+        print("AG:", self.result_sol, self.result_cost)
+        self.model.insertSol(self.result_sol)
 
 
-class MyModel(Model):
-    """A model with some number of agents."""
+# class MyModel(Model):
+#     """A model with some number of agents."""
 
-    def __init__(self, N, matrice, w, capacities, max_capacity, sol_init):
-        self.num_agents = N
-        self.schedule = RandomActivation(self)
-        # Create agents
-        for i in range(self.num_agents):
-            a = AGent(i, sol_init, matrice, w, capacities, max_capacity, self)
-            self.schedule.add(a)
+#     def __init__(self, N, matrice, w, capacities, max_capacity, sol_init):
+#         self.num_agents = N
+#         self.schedule = RandomActivation(self)
+#         # Create agents
+#         for i in range(self.num_agents):
+#             a = AGent(i, sol_init, matrice, w, capacities, max_capacity, self)
+#             self.schedule.add(a)
 
-    def step(self):
-        """Advance the model by one step."""
-        self.schedule.step()
+#     def step(self):
+#         """Advance the model by one step."""
+#         self.schedule.step()
 
 
 if __name__ == "__main__":
