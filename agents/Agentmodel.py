@@ -1,3 +1,4 @@
+from multiprocessing import pool
 from mesa import Model
 from mesa.time import RandomActivation
 from AG.AgentModel import AGent
@@ -5,13 +6,15 @@ from tabou_agent import TabouAgent
 from rs_agent import RSAgent
 import numpy as np
 from random import choice
+from compare_sol import compare_sol
 
 class MyModel(Model):
     """A model with some number of agents."""
-    
+
     def __init__(self, N, matrice, w, capacities, max_capacity, sol_init, log = False):
         # Pool of possible solution, commence avec une solution initiale
         self.pool = [sol_init]
+        self.pool_step = []
         self.num_agents = N
         self.schedule = RandomActivation(self)
 
@@ -26,14 +29,39 @@ class MyModel(Model):
 
     def step(self):
         """Advance the model by one step."""
+        self.pool_step = []
         self.schedule.step()
+        self.insertStep()
 
     def selectSol(self):
         sol = choice(self.pool)
         return sol
 
-    def insertSol(self, sol):
-        self.pool.append(sol)
+    def insertSolStep(self, sol):
+        self.pool_step.append(sol)
+
+    def insertStep(self):
+
+        def sort_by_g(elem):
+            return elem[0]
+
+        POOL_RADIUS = 5 # TODO HOW choose a good radius???
+        # Calculate the distance between solution for add only the effective
+        gSols = []
+        for sol in self.pool_step:
+            for pool_sol in self.pool:
+                gSol = 0
+                distance = compare_sol(sol, pool_sol)
+                if (distance > POOL_RADIUS):
+                    pass
+                else:
+                    gSol += 1 - distance/POOL_RADIUS
+            gSols.append([gSol, sol])
+        gSols.sort(key=sort_by_g)
+        self.pool.append(gSols[0][1])
+        print(f"Solution added to the pool: {gSols[0][1]} with a g={gSols[0][0]}")
+
+
 
 if __name__ == "__main__":
     matrice_example = np.matrix([[0, 14, 18, 9, 5, 7], 

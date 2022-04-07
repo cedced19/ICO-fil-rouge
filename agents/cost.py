@@ -1,6 +1,7 @@
-
-
 def cout(solution, matrice, w):
+    '''
+    Calculate cout d'une solution
+    '''
     K = len(solution) - solution.count([])
     sum_cost = 0
     for route in solution:

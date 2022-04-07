@@ -18,4 +18,4 @@ class TabouAgent(Agent):
         self.result_cost = result[1]
         self.result_sol = result[0]
         print("Tabou", self.result_cost, self.result_sol)
-        self.model.insertSol(self.result_sol)
+        self.model.insertSolStep(self.result_sol)

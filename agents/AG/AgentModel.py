@@ -3,6 +3,7 @@ from AG.AGalgorithm import AG_Algorithm
 from AG.classes import Customer
 from typing import List
 import numpy as np
+import cost
 
 def convertGlobalSolToAGSol(solution: List[List], capacities):
     """
@@ -47,8 +48,9 @@ class AGent(Agent):
         # print(result.chromosome)
         # print(result.calculateScore())
         self.result_sol = result.solution.convertGlobalSolution()
-        print("AG:", self.result_sol, self.result_cost)
-        self.model.insertSol(self.result_sol)
+        # Print with the general function of cout
+        print("AG:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
+        self.model.insertSolStep(self.result_sol)
 
 
 # class MyModel(Model):

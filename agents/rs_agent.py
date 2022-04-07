@@ -19,4 +19,4 @@ class RSAgent(Agent):
         self.result_cost = result[1]
         self.result_sol = result[0]
         print("RS", self.result_cost, self.result_sol)
-        self.model.insertSol(self.result_sol)
+        self.model.insertSolStep(self.result_sol)
