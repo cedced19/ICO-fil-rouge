@@ -20,11 +20,11 @@ class MyModel(Model):
 
         # Creation des trois agent 1 pour chaque algo.
         # Tabou Agent
-        self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, self))
+        # self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, self))
         # Recuit Simule
-        self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, self))
+        # self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, self))
         # Genetique
-        self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self))
+        self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self, Qlearning=True))
 
 
     def step(self):
