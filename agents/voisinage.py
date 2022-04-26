@@ -80,11 +80,17 @@ def del_small_route(s):
     for i in range(l):
         size_route.append(len(s[i]))
     id_min = size_route.index(min(size_route))
+    a = s[id_min]
     del s[id_min]
+    r = random.randint(0,l-2)
+    s[r]=s[r]+a
     return()
 
 def del_random_route(s):
     l=len(s)
     i=random.randint(0,l-1)
+    a = s[i]
     del s[i]
+    r = random.randint(0,l-2)
+    s[r]=s[r]+a
     return()
