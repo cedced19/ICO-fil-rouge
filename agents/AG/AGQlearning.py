@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, random
 from mesa import Agent
 import numpy as np
 
@@ -14,7 +14,8 @@ class AGQlearning:
     lr=.85 #appelé alpha, vitesse d'apprentissage : degré d’acceptation de la nouvelle valeur par rapport à l’ancienne
     y=.95 #appelé aussi gamma, facteur d'actualisation,  utilisé pour équilibrer la récompense immédiate et future. nous appliquons la décote à la récompense future. En général, cette valeur peut varier entre 0,8 et 0,99
 
-
+    # Greedy Epsilon
+    epsilon = 0.8
 
     def __init__(self, agent) -> None:
         self.Qmut = np.zeros((self.states_n, self.actions_n))
@@ -39,8 +40,8 @@ class AGQlearning:
         stateMut = self.agent.P_MUT
         Q2Mut = self.Qmut[int(stateMut*10), :] + np.random.randn(1, self.actions_n)*(1. / (self.I + 1))
         actionMut = np.argmax(Q2Mut)
-        # TODO Reduce random choice
-        if randint(1, 100) < 50:
+
+        if random() < self.epsilon:
             actionMut = randint(0, 2)
         newStateMut = self.agent.P_MUT + self.ACTIONS[actionMut]
 
@@ -48,13 +49,15 @@ class AGQlearning:
         stateCross = self.agent.P_CROSS
         Q2Cross = self.Qcross[int(10*stateCross), :] + np.random.randn(1, self.actions_n)*(1. / (self.I + 1))
         actionCross = np.argmax(Q2Cross)
-        # TODO Reduce random choice
-        if randint(1, 100) < 50:
+        if random() < self.epsilon:
             actionCross = randint(0, 2)
         newStateCross = self.agent.P_CROSS + self.ACTIONS[actionCross]
 
         self.states_list.append([(stateMut, newStateMut), (stateCross, newStateCross)])
         self.actions_list.append([actionMut, actionCross])
+
+        if (self.epsilon > 0.1):
+            self.epsilon -= 0.05
 
         return newStateCross, newStateMut
 
