@@ -57,7 +57,7 @@ class MyModel(Model):
         # Recuit Simule
         self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Genetique
-        #self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self))
+        self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self, ql))
 
 
     def step(self):

@@ -46,7 +46,7 @@ class AGent(Agent):
         if (Qlearning):
             self.Qlearning = AGQlearning(self)
 
-    def step(self):
+    def step(self, return_dict, id):
 
         if(self.Qlearning):
             self.P_CROSS, self.P_MUT = self.Qlearning.episode()
@@ -64,11 +64,17 @@ class AGent(Agent):
         # print(result.calculateScore())
         self.result_sol = result.solution.convertGlobalSolution()
         # Print with the general function of cout
-        print("AG:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
+        if (self.Qlearning):
+            print("AG QL:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
+        else:
+            print("AG:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
         self.model.insertSolStep(self.result_sol)
 
         if(self.Qlearning):
             self.Qlearning.learn_Q(self.result_cost)
+        
+        return_dict[id] = self.result_sol
+        return return_dict
 
 
 # class MyModel(Model):
