@@ -133,7 +133,8 @@ def del_small_route_w_capacity(s,capa,max_capa):
         if test_capacity(vois):
             return(vois)
         else:
-            s = S        
+            s = S
+            vois = del_small_route(s)
     return(s)
 
 
@@ -145,7 +146,8 @@ def del_random_route_w_capacity(s,capa,max_capa):
         if test_capacity(vois):
             return(vois)
         else:
-            s = S        
+            s = S
+            vois = del_random_route(s)
     return(s)
 
 
@@ -157,7 +159,8 @@ def inter_route_swap_w_capacity(s,capa,max_capa):
         if test_capacity(vois):
             return(vois)
         else:
-            s = S        
+            s = S
+            vois = inter_route_swap(s)
     return(s)
 
 
@@ -169,5 +172,6 @@ def inter_route_shift_w_capacity(s,capa,max_capa):
         if test_capacity(vois):
             return(vois)
         else:
-            s = S        
+            s = S
+            vois = inter_route_shift(s)
     return(s)
