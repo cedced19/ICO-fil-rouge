@@ -44,7 +44,7 @@ class MultiProcessActivation(BaseScheduler):
 class MyModel(Model):
     """A model with some number of agents."""
 
-    def __init__(self, N, matrice, w, capacities, max_capacity, sol_init, log = False):
+    def __init__(self, N, matrice, w, capacities, max_capacity, sol_init, ql, log = False):
         # Pool of possible solution, commence avec une solution initiale
         self.pool = [sol_init]
         self.pool_step = []
@@ -53,11 +53,11 @@ class MyModel(Model):
 
         # Creation des trois agent 1 pour chaque algo.
         # Tabou Agent
-        self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, self))
+        self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Recuit Simule
-        self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, self))
+        self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Genetique
-        self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self))
+        #self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self))
 
 
     def step(self):
@@ -112,6 +112,6 @@ if __name__ == "__main__":
     max_capacity = 100
     capacities_example = [30]*6
 
-    model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example)
+    model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example, True)
     for i in range(3):
         model.step()

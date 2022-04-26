@@ -4,6 +4,7 @@ from AG.classes import Customer
 from typing import List
 import numpy as np
 import cost
+from AG.AGQlearning import AGQlearning
 
 def convertGlobalSolToAGSol(solution: List[List], capacities):
     """
@@ -34,15 +35,29 @@ class AGent(Agent):
 
     """
 
-    def __init__(self, unique_id, sol_init, matrice, w, capacities, max_capacity, model):
+    def __init__(self, unique_id, sol_init, matrice, w, capacities, max_capacity, model, Qlearning = False):
         super().__init__(unique_id, model)
         self.sol_init, self.matrice, self.w, self.capacities, self.max_capacity = sol_init, matrice, w, capacities, max_capacity
         self.result_cost = np.Inf
 
-    def step(self, return_dict, id):
+        self.P_MUT = 0.6
+        self.P_CROSS = 0.6
+        self.Qlearning = None
+        if (Qlearning):
+            self.Qlearning = AGQlearning(self)
+
+    def step(self):
+
+        if(self.Qlearning):
+            self.P_CROSS, self.P_MUT = self.Qlearning.episode()
+
         sol = self.model.selectSol()
         sol_init_converted = convertGlobalSolToAGSol(sol, self.capacities)
+        # Fix algorithm with parameters
         agAlgorithm = AG_Algorithm(sol_init_converted, self.matrice, self.max_capacity)
+        agAlgorithm.P_MUT = self.P_MUT
+        agAlgorithm.P_CROSS = self.P_CROSS
+
         result = agAlgorithm.perform()
         self.result_cost = result.calculateScore()
         # print(result.chromosome)
@@ -50,22 +65,26 @@ class AGent(Agent):
         self.result_sol = result.solution.convertGlobalSolution()
         # Print with the general function of cout
         print("AG:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
-        return_dict[id] = self.result_sol
-        return return_dict
+        self.model.insertSolStep(self.result_sol)
+
+        if(self.Qlearning):
+            self.Qlearning.learn_Q(self.result_cost)
 
 
-class MyModel(Model):
-     """A model with some number of agents."""
-     def __init__(self, N, matrice, w, capacities, max_capacity, sol_init):
-         self.num_agents = N
-         self.schedule = RandomActivation(self)
-         # Create agents
-         for i in range(self.num_agents):
-             a = AGent(i, sol_init, matrice, w, capacities, max_capacity, self)
-             self.schedule.add(a)
-     def step(self):
-         """Advance the model by one step."""
-         self.schedule.step()
+# class MyModel(Model):
+#     """A model with some number of agents."""
+
+#     def __init__(self, N, matrice, w, capacities, max_capacity, sol_init):
+#         self.num_agents = N
+#         self.schedule = RandomActivation(self)
+#         # Create agents
+#         for i in range(self.num_agents):
+#             a = AGent(i, sol_init, matrice, w, capacities, max_capacity, self)
+#             self.schedule.add(a)
+
+#     def step(self):
+#         """Advance the model by one step."""
+#         self.schedule.step()
 
 
 if __name__ == "__main__":
