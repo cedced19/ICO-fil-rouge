@@ -13,14 +13,14 @@ import queue
 
 class MultiProcessActivation(BaseScheduler):
     """A scheduler which activates each agent once per step, in random order,
-    with the order reshuffled every step.
+    with the order reshuffled every step. The agents conduct themselves in a respective thread for each.
     This is equivalent to the NetLogo 'ask agents...' and is generally the
     default behavior for an ABM.
     Assumes that all agents have a step(model) method.
     """
 
     def step(self) -> None:
-        """Executes the step of all agents, one at a time, in
+        """Executes the step of all agents, at the same time, starting in a
         random order.
         """
         q = queue.Queue()
