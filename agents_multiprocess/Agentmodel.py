@@ -30,13 +30,17 @@ class MultiProcessActivation(BaseScheduler):
         for count, agent in enumerate(self.agent_buffer(shuffled=True)):
             p = multiprocessing.Process(target=agent.step, args=(return_dict, count))
             p.start()
-            q.put((count, p))
+            q.put((count, p, agent.unique_id, agent.model.differentPool)) # definition of the r vector
+            if (agent.model.differentPool):
+                self.pool_step.append([])
         while not q.empty():
             r = q.get()
             p = r[1]
             p.join()
-            self.pool_step.append(return_dict[r[0]])
-            
+            if (r[3]):
+                self.pool_step[r[2]].append(return_dict[r[0]])
+            else:
+                self.pool_step.append(return_dict[r[0]])
 
         self.steps += 1
         self.time += 1
@@ -44,35 +48,55 @@ class MultiProcessActivation(BaseScheduler):
 class MyModel(Model):
     """A model with some number of agents."""
 
-    def __init__(self, N, matrice, w, capacities, max_capacity, sol_init, ql, log = False):
+    def __init__(self, N, matrice, w, capacities, max_capacity, sol_init, differentPool, ql, log = False):
         # Pool of possible solution, commence avec une solution initiale
-        self.pool = [sol_init]
-        self.pool_step = []
         self.num_agents = N
+        self.differentPool = differentPool
+        if (not self.differentPool):
+            self.pool = [sol_init]
+            self.pool_step = []
+        else:
+            self.pool = []
+            self.pool_step = []
+            for i in range(0,self.num_agents):
+                self.pool.append([sol_init])
+                self.pool_step.append([])
         self.schedule = MultiProcessActivation(self)
 
         # Creation des trois agent 1 pour chaque algo.
         # Tabou Agent
-        self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
+        self.schedule.add(TabouAgent(0, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Recuit Simule
-        self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
+        self.schedule.add(RSAgent(1, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Genetique
-        self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self, ql))
+        self.schedule.add(AGent(2, sol_init, matrice, w, capacities, max_capacity, self, ql))
 
 
     def step(self):
         """Advance the model by one step."""
-        self.pool_step = []
+        if (not self.differentPool):
+            self.pool_step = []
+        else:
+            self.pool_step = []
+            for i in range(0,self.num_agents):
+                self.pool_step.append([])
         self.schedule.step()
         self.pool_step = self.schedule.pool_step
         self.insertStep()
 
-    def selectSol(self):
-        sol = choice(self.pool)
+    def selectSol(self, unique_id):
+        if (not self.differentPool):
+            sol = choice(self.pool)
+        else:
+            sol = choice(self.pool[unique_id])
         return sol
 
-    def insertSolStep(self, sol):
-        self.pool_step.append(sol)
+    def insertSolStep(self, sol, unique_id):
+        if (not self.differentPool):
+            self.pool_step.append(sol)
+        else:
+            self.pool_step[unique_id].append(sol)
+        
 
     def insertStep(self):
         #self.pool = self.pool_step.copy()
@@ -83,18 +107,37 @@ class MyModel(Model):
 
         POOL_RADIUS = 5 # TODO HOW choose a good radius???
         # Calculate the distance between solution for add only the effective
-        gSols = []
-        for sol in self.pool_step:
-            for pool_sol in self.pool:
-                gSol = 0
-                distance = compare_sol(sol, pool_sol)
-                if (distance > POOL_RADIUS):
-                    pass
-                else:
-                    gSol += 1 - distance/POOL_RADIUS
-            gSols.append([gSol, sol])
-        gSols.sort(key=sort_by_g)
-        self.pool.append(gSols[0][1])
+        if (self.differentPool):
+            for i in range(0,self.num_agents):
+                gSols = []
+                print(self.pool_step[i], self.pool[i])
+                for sol in self.pool_step[i]:
+                    for pool_sol in self.pool[i]:
+                        
+                        gSol = 0
+                        distance = compare_sol(sol, pool_sol)
+                        if (distance > POOL_RADIUS):
+                            pass
+                        else:
+                            gSol += 1 - distance/POOL_RADIUS
+                    gSols.append([gSol, sol])
+                gSols.sort(key=sort_by_g)
+                
+                print(gSols)
+                self.pool[i].append(gSols[0][1])
+        else:
+            gSols = []
+            for sol in self.pool_step:
+                for pool_sol in self.pool:
+                    gSol = 0
+                    distance = compare_sol(sol, pool_sol)
+                    if (distance > POOL_RADIUS):
+                        pass
+                    else:
+                        gSol += 1 - distance/POOL_RADIUS
+                gSols.append([gSol, sol])
+            gSols.sort(key=sort_by_g)
+            self.pool.append(gSols[0][1])
         print(f"Solution added to the pool: {gSols[0][1]} with a g={gSols[0][0]}")
 
 
@@ -112,6 +155,8 @@ if __name__ == "__main__":
     max_capacity = 100
     capacities_example = [30]*6
 
-    model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example, True)
+    enemyApproach = False
+    QLearning = True
+    model = MyModel(3, matrice_example, 5, capacities_example, max_capacity, sol_example, enemyApproach, QLearning)
     for i in range(3):
         model.step()

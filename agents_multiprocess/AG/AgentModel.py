@@ -51,7 +51,7 @@ class AGent(Agent):
         if(self.Qlearning):
             self.P_CROSS, self.P_MUT = self.Qlearning.episode()
 
-        sol = self.model.selectSol()
+        sol = self.model.selectSol(self.unique_id)
         sol_init_converted = convertGlobalSolToAGSol(sol, self.capacities)
         # Fix algorithm with parameters
         agAlgorithm = AG_Algorithm(sol_init_converted, self.matrice, self.max_capacity)
@@ -68,7 +68,7 @@ class AGent(Agent):
             print("AG QL:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
         else:
             print("AG:", cost.cout(self.result_sol, self.matrice, self.w), self.result_sol)
-        self.model.insertSolStep(self.result_sol)
+        self.model.insertSolStep(self.result_sol, self.unique_id)
 
         if(self.Qlearning):
             self.Qlearning.learn_Q(self.result_cost)

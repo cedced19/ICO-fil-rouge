@@ -14,7 +14,7 @@ class TabouAgent(Agent):
         self.result_cost = np.Inf
 
     def step(self, return_dict, id):
-        sol = self.model.selectSol()
+        sol = self.model.selectSol(self.unique_id)
         if (self.ql):
             result = tabu_ql(sol, self.matrice, self.n_max, self.aspiration, self.w, self.capacities, self.max_capacity, log = self.log)
             print("Tabou QL", result[1], result[0])
@@ -23,6 +23,6 @@ class TabouAgent(Agent):
             print("Tabou", result[1], result[0])
         self.result_cost = result[1]
         self.result_sol = result[0]
-        
+        self.model.insertSolStep(self.result_sol, self.unique_id)
         return_dict[id] = self.result_sol
         return return_dict

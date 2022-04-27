@@ -15,7 +15,7 @@ class RSAgent(Agent):
         self.result_cost = np.Inf
 
     def step(self, return_dict, id):
-        sol = self.model.selectSol()
+        sol = self.model.selectSol(self.unique_id)
         if (self.ql):
             result = recuit_ql(sol, self.matrice, self.w, self.t0, self.a, self.n_iter_cycle, self.capacities, self.max_capacity, log = self.log)
             print("RS QL", result[1], result[0])
@@ -24,5 +24,6 @@ class RSAgent(Agent):
             print("RS", result[1], result[0])
         self.result_cost = result[1]
         self.result_sol = result[0]
+        self.model.insertSolStep(self.result_sol, self.unique_id)
         return_dict[id] = self.result_sol
         return return_dict
