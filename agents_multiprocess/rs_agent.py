@@ -28,5 +28,5 @@ class RSAgent(Agent):
         return_dict[id] = self.result_sol
         return return_dict
 
-    def plot():
+    def plot(self):
         pass
