@@ -85,7 +85,7 @@ class AG_Algorithm:
 
     P_MUT = 0.6
     P_CROSS = 0.6
-    N_ITERATION = 20
+    N_ITERATION = 15
     N_POPULATION = 4
 
     def __init__(self, base_individu, cost_matrice, maxCapacity) -> None:

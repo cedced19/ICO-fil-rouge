@@ -76,6 +76,9 @@ class AGent(Agent):
         return_dict[id] = self.result_sol
         return return_dict
 
+    def plot(self):
+        self.Qlearning.plot()
+
 
 # class MyModel(Model):
 #     """A model with some number of agents."""

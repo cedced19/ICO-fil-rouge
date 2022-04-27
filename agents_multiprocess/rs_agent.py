@@ -27,3 +27,6 @@ class RSAgent(Agent):
         self.model.insertSolStep(self.result_sol, self.unique_id)
         return_dict[id] = self.result_sol
         return return_dict
+
+    def plot():
+        pass

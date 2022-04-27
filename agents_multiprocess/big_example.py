@@ -111,8 +111,12 @@ capacities_example = [1]*51
 max_capacity = 100
 
 from Agentmodel import MyModel
-if __name__ == '__main__':  
-    model = MyModel(3, matrice_example, 5, capacities_example, max_capacity, sol_example,True, True ,log = False)
+if __name__ == '__main__':
+    enemyApproach = False
+    QLearning = True
+    model = MyModel(3, matrice_example, 5, capacities_example, max_capacity, sol_example, enemyApproach, QLearning ,log = False)
     for i in range(3):
         model.step()
+    for agent in model.schedule.agents:
+        agent.plot()
     model.plot()
