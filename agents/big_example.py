@@ -107,11 +107,14 @@ matrice_example =  np.matrix([
      8, 12, 11, 19, 12, 9, 7, 14, 11, 15, 24, 27, 12, 0, 11, 10, 21, 22, 12, 10, 7, 6, 0]])
 
 sol_example = [[3, 1, 8, 5, 7, 12, 10, 13, 42], [22, 2, 15, 11, 49, 16, 17, 39, 28, 29, 27, 33, 36, 38, 34, 23, 20, 21, 19, 26, 41, 32, 45, 14, 4, 6, 30, 35, 47, 43, 9, 40, 24, 50, 25, 51], [37], [48], [18], [31], [44], [46]]
-capacities_example = [1]*51
+capacities_example = np.random.randint(1,10,size=(51)) # [3]*51
 max_capacity = 100
 
 from Agentmodel import MyModel
  
 model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example, log = True)
-for i in range(3):
+for i in range(5):
     model.step()
+for agent in model.schedule.agents:
+    agent.plot()
+model.plot()

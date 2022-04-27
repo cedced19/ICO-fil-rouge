@@ -8,7 +8,7 @@ class RSAgent(Agent):
     """An agent with initial solution."""
     t0 = 200
     a = 0.2
-    n_iter_cycle = 10
+    n_iter_cycle = 5
     def __init__(self, unique_id, sol_init, matrice, w, capacities, max_capacity, log, ql, model):
         super().__init__(unique_id, model)
         self.sol_init, self.matrice, self.w, self.capacities, self.max_capacity, self.log, self.ql = sol_init, matrice, w, capacities, max_capacity, log, ql

@@ -77,7 +77,8 @@ class AGent(Agent):
         return return_dict
 
     def plot(self):
-        self.Qlearning.plot()
+        if(self.Qlearning):
+            self.Qlearning.plot()
 
 
 # class MyModel(Model):
