@@ -69,6 +69,9 @@ class AGent(Agent):
 
         if(self.Qlearning):
             self.Qlearning.learn_Q(self.result_cost)
+    
+    def plot(self):
+        self.Qlearning.plot()
 
 
 # class MyModel(Model):

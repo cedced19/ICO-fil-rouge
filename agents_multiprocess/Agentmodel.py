@@ -1,3 +1,4 @@
+from cmath import log
 from multiprocessing import pool
 from mesa import Model
 from mesa.time import BaseScheduler
@@ -53,9 +54,9 @@ class MyModel(Model):
 
         # Creation des trois agent 1 pour chaque algo.
         # Tabou Agent
-        self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
+        # self.schedule.add(TabouAgent(1, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Recuit Simule
-        self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
+        # self.schedule.add(RSAgent(2, sol_init, matrice, w, capacities, max_capacity, log, ql, self))
         # Genetique
         self.schedule.add(AGent(3, sol_init, matrice, w, capacities, max_capacity, self, ql))
 
