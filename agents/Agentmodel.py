@@ -7,6 +7,9 @@ from rs_agent import RSAgent
 import numpy as np
 from random import choice
 from compare_sol import compare_sol
+from cost import cout
+import matplotlib.pyplot as plt
+
 
 class MyModel(Model):
     """A model with some number of agents."""
@@ -17,6 +20,10 @@ class MyModel(Model):
         self.pool_step = []
         self.num_agents = N
         self.schedule = RandomActivation(self)
+        self.matrice = matrice
+        self.w = w
+
+        self.scores_pool = []
 
         # Creation des trois agent 1 pour chaque algo.
         # Tabou Agent
@@ -32,6 +39,19 @@ class MyModel(Model):
         self.pool_step = []
         self.schedule.step()
         self.insertStep()
+        self.scorePool()
+
+    def scorePool(self):
+        min = np.Inf
+        total = 0
+        for sol in self.pool:
+            coutSol = cout(sol, self.matrice, self.w)
+            total += coutSol
+            if coutSol < min:
+                min = coutSol
+        avg = total/len(self.pool)
+        self.scores_pool.append([avg, min])
+
 
     def selectSol(self):
         sol = choice(self.pool)
@@ -61,6 +81,11 @@ class MyModel(Model):
         self.pool.append(gSols[0][1])
         print(f"Solution added to the pool: {gSols[0][1]} with a g={gSols[0][0]}")
 
+    def plot(self):
+        plt.plot([x[0] for x in self.scores_pool], 'r', label="AVG Score in pool")
+        plt.plot([x[1] for x in self.scores_pool], 'g', label="MIN Score in pool")
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -77,5 +102,8 @@ if __name__ == "__main__":
     capacities_example = [30]*6
 
     model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example)
-    for i in range(3):
+    for i in range(5):
         model.step()
+    model.plot()
+    for agent in model.schedule.agents:
+        agent.plot()

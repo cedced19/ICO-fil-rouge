@@ -72,6 +72,7 @@ class AGQlearning:
         self.Qcross[int(10*s), action] = self.Qcross[int(10*s), action] + self.lr*(reward + self.y * np.max(self.Qcross[int(10*s1), :]) - self.Qcross[int(10*s), action])
 
         self.cumul_reward_list.append(reward)
+        print(reward)
         print(f"rewards: {self.cumul_reward_list}")
         print(f"actions: {self.actions_list}")
         print(f"states: {self.states_list}")

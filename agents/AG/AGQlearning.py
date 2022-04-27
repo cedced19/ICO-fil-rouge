@@ -1,6 +1,8 @@
+from cProfile import label
 from random import randint, random
 from mesa import Agent
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class AGQlearning:
@@ -28,6 +30,7 @@ class AGQlearning:
 
     def step(self):
         self.episode()
+        self.plot()
 
     def episode(self):
         '''
@@ -71,7 +74,17 @@ class AGQlearning:
         action = self.actions_list[-1][0]
         self.Qcross[int(10*s), action] = self.Qcross[int(10*s), action] + self.lr*(reward + self.y * np.max(self.Qcross[int(10*s1), :]) - self.Qcross[int(10*s), action])
 
-        self.cumul_reward_list.append(reward)
+        self.cumul_reward_list.append(int(reward))
         print(f"rewards: {self.cumul_reward_list}")
         print(f"actions: {self.actions_list}")
         print(f"states: {self.states_list}")
+
+    def plot(self):
+        n_iteration = [i+1 for i in range(len(self.cumul_reward_list))]
+        plt.plot(n_iteration, self.cumul_reward_list, color="red", label="Reward by Iteration")
+        plt.show()
+
+        plt.plot(n_iteration, [x[0][1] for x in self.states_list], 'g', label="P_MUT")
+        plt.plot(n_iteration, [x[1][1] for x in self.states_list], 'r', label="P_CROSS")
+        plt.legend()
+        plt.show()

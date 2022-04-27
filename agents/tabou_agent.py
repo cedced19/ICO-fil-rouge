@@ -19,3 +19,7 @@ class TabouAgent(Agent):
         self.result_sol = result[0]
         print("Tabou", self.result_cost, self.result_sol)
         self.model.insertSolStep(self.result_sol)
+
+    def plot(self):
+        # TODO plot Qlearning data
+        pass

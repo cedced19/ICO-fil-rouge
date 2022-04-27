@@ -1,3 +1,4 @@
+from cmath import log
 from multiprocessing import pool
 from mesa import Model
 from mesa.time import BaseScheduler
