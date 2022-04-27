@@ -111,8 +111,8 @@ capacities_example = [1]*51
 max_capacity = 100
 
 from Agentmodel import MyModel
- 
-model = MyModel(1, matrice_example, 5, capacities_example, max_capacity, sol_example,ql=True, differentPool=True ,log = False)
-for i in range(5):
-    model.step()
-model.plot()
+if __name__ == '__main__':  
+    model = MyModel(3, matrice_example, 5, capacities_example, max_capacity, sol_example,True, True ,log = False)
+    for i in range(3):
+        model.step()
+    model.plot()
