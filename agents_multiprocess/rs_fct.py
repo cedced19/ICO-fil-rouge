@@ -167,7 +167,7 @@ def recuit(sol_init, matrice, w, t0, a, n_iter_cycle, capacities, max_capacity, 
             n_iter_total += 1
             n_iter_total_list.append(n_iter_total)
             n_iter += 1
-            tmp = relocate(current_sol, matrice, w, capacities, max_capacity) + exchange(current_sol, matrice, w, capacities, max_capacity) + exchange_inside(current_sol, matrice, w, capacities, max_capacity)
+            tmp = relocate(current_sol, matrice, w, capacities, max_capacity) + exchange(current_sol, matrice, w, capacities, max_capacity) + exchange_inside(current_sol, matrice, w, capacities, max_capacity)           
             if (len(tmp)):
                 picked_sol = random.choice(tmp)
                 df = cout(picked_sol[0], matrice, w) - cout(current_sol, matrice, w)

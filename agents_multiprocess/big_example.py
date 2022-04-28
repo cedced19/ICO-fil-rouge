@@ -106,16 +106,17 @@ matrice_example =  np.matrix([
     [100, 31, 21, 14, 24, 19, 11, 16, 21, 20, 14, 17, 31, 13, 11, 21, 11, 10, 7, 11, 21, 11, 9, 27, 8, 12, 14, 22, 12,
      8, 12, 11, 19, 12, 9, 7, 14, 11, 15, 24, 27, 12, 0, 11, 10, 21, 22, 12, 10, 7, 6, 0]])
 
-sol_example = [[3, 1, 8, 5, 7, 12, 10, 13, 42], [22, 2, 15, 11, 49, 16, 17, 39, 28, 29, 27, 33, 36, 38, 34, 23, 20, 21, 19, 26, 41, 32, 45, 14, 4, 6, 30, 35, 47, 43, 9, 40, 24, 50, 25, 51], [37], [48], [18], [31], [44], [46]]
-capacities_example = [1]*51
+sol_example = [[3, 1, 8, 5, 7, 12, 10, 13, 42], [22, 2, 25, 51], [15, 11, 43, 9, 40, 24, 50], [37], [29, 27, 26, 41, 32, 45, 14, 4, 6, 30], [48, 33, 36, 38, 34, 23, 20, 21, 19], [18], [31], [44], [46,  49, 16, 17, 39, 28, 35, 47]]
+capacities_example = np.random.randint(1,10,size=(51)) # [3]*51
 max_capacity = 100
+
 
 from Agentmodel import MyModel
 if __name__ == '__main__':
     enemyApproach = False
     QLearning = True
-    model = MyModel(3, matrice_example, 5, capacities_example, max_capacity, sol_example, enemyApproach, QLearning ,log = False)
-    for i in range(3):
+    model = MyModel(3, matrice_example, 100, capacities_example, max_capacity, sol_example, enemyApproach, QLearning ,log = False)
+    for i in range(10):
         model.step()
     for agent in model.schedule.agents:
         agent.plot()
