@@ -1,5 +1,10 @@
 # Fil rouge
 
+Yishan Sun, Simon Kurney, Pablo Aldana, Cédric Jung, Baptiste Deconihout, Zoé Poupardin
+
+![Compte Rendu](CR.pdf)
+![Présentation](Présentation.pdf)
+
 ## Organisation des fichiers
 
 - Dans `agents/`, on retrouve les agents avec la méthode QLearning implémenté uniquement pour l'Algorithme Génétique
