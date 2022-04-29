@@ -2,8 +2,8 @@
 
 Yishan Sun, Simon Kurney, Pablo Aldana, Cédric Jung, Baptiste Deconihout, Zoé Poupardin
 
-![Compte Rendu](CR.pdf)
-![Présentation](Présentation.pdf)
+[Compte Rendu](CR.pdf)
+[Présentation](Présentation.pdf)
 
 ## Organisation des fichiers
 
